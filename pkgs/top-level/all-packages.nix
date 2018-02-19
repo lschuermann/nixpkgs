@@ -121,6 +121,8 @@ with pkgs;
 
   dieHook = makeSetupHook {} ../build-support/setup-hooks/die.sh;
 
+  diesel-cli = callPackage ../development/tools/diesel-cli/default.nix { };
+  
   dockerTools = callPackage ../build-support/docker { };
 
   docker_compose = pythonPackages.docker_compose;
