@@ -1,17 +1,19 @@
-{ stdenv, fetchurl, pkgconfig, systemd ? null, libobjc, IOKit }:
+{ stdenv, fetchFromGitHub, autoreconfHook, pkgconfig, systemd ? null, libobjc, IOKit }:
 
 stdenv.mkDerivation rec {
   name = "libusb-${version}";
   version = "1.0.22";
 
-  src = fetchurl {
-    url = "https://github.com/libusb/libusb/releases/download/v${version}/${name}.tar.bz2";
-    sha256 = "0mw1a5ss4alg37m6bd4k44v35xwrcwp5qm4s686q1nsgkbavkbkm";
+  src = fetchFromGitHub {
+    owner = "libusb";
+    repo = "libusb";
+    rev = "v${version}";
+    sha256 = "1cff09csp8z4jd3165xa0i2zii5dvcin3j3v56vqjzni0wagaw0l";
   };
 
   outputs = [ "out" "dev" ]; # get rid of propagating systemd closure
 
-  nativeBuildInputs = [ pkgconfig ];
+  nativeBuildInputs = [ pkgconfig autoreconfHook ];
   propagatedBuildInputs =
     stdenv.lib.optional stdenv.isLinux systemd ++
     stdenv.lib.optionals stdenv.isDarwin [ libobjc IOKit ];
