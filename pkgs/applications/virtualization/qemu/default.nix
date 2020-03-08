@@ -15,6 +15,7 @@
 , usbredirSupport ? spiceSupport, usbredir
 , xenSupport ? false, xen
 , cephSupport ? false, ceph
+, glusterSupport ? false, glusterfs, libuuid
 , openGLSupport ? sdlSupport, mesa, epoxy, libdrm
 , virglSupport ? openGLSupport, virglrenderer
 , smbdSupport ? false, samba
@@ -50,7 +51,7 @@ stdenv.mkDerivation rec {
   buildInputs =
     [ zlib glib ncurses perl pixman
       vde2 texinfo makeWrapper lzo snappy
-      gnutls nettle curl
+      gnutls nettle curl glusterfs
     ]
     ++ optionals stdenv.isDarwin [ CoreServices Cocoa Hypervisor rez setfile ]
     ++ optionals seccompSupport [ libseccomp ]
@@ -65,9 +66,12 @@ stdenv.mkDerivation rec {
     ++ optionals stdenv.isLinux [ alsaLib libaio libcap_ng libcap attr ]
     ++ optionals xenSupport [ xen ]
     ++ optionals cephSupport [ ceph ]
+    ++ optionals glusterSupport [ glusterfs libuuid ]
     ++ optionals openGLSupport [ mesa epoxy libdrm ]
     ++ optionals virglSupport [ virglrenderer ]
     ++ optionals smbdSupport [ samba ];
+
+  PKG_CONFIG_PATH = "${glusterfs}/lib/pkgconfig";
 
   enableParallelBuilding = true;
 
@@ -129,6 +133,7 @@ stdenv.mkDerivation rec {
     ++ optional gtkSupport "--enable-gtk"
     ++ optional xenSupport "--enable-xen"
     ++ optional cephSupport "--enable-rbd"
+    ++ optional glusterSupport "--enable-glusterfs"
     ++ optional openGLSupport "--enable-opengl"
     ++ optional virglSupport "--enable-virglrenderer"
     ++ optional smbdSupport "--smbd=${samba}/bin/smbd";

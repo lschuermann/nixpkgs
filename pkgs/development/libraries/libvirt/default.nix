@@ -8,6 +8,7 @@
 , enableXen ? false, xen ? null
 , enableIscsi ? false, openiscsi
 , enableCeph ? false, ceph
+, enableGluster ? false, glusterfs
 }:
 
 with stdenv.lib;
@@ -72,6 +73,8 @@ in stdenv.mkDerivation rec {
     openiscsi
   ] ++ optionals enableCeph [
     ceph
+  ] ++ optionals enableGluster [
+    glusterfs
   ] ++ optionals stdenv.isDarwin [
     libiconv gmp
   ];
@@ -115,6 +118,8 @@ in stdenv.mkDerivation rec {
     "--with-storage-iscsi"
   ] ++ optionals enableCeph [
     "--with-storage-rbd"
+  ] ++ optionals enableGluster [
+    "--with-storage-gluster"
   ] ++ optionals stdenv.isDarwin [
     "--with-init-script=none"
   ];
